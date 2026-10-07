@@ -81,6 +81,8 @@ export default async function AppointmentPage({ params, searchParams }: PageProp
               <ButtonLink href={`/ventas/${sale.id}`} variant="soft" block>
                 <Receipt className="size-4" /> Venta registrada · {formatCOP(sale.total)}
               </ButtonLink>
+            ) : a.status === 'finalizada' ? (
+              <p className="rounded-2xl bg-success-soft px-4 py-3 text-center text-sm text-success">Servicio finalizado y venta registrada</p>
             ) : (
               <PrimaryAction id={a.id} status={a.status} />
             )}

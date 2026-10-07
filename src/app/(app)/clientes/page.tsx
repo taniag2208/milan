@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ButtonLink } from '@/components/ui/button'
 import { cn } from '@/components/ui/cn'
-import { can, requireSession } from '@/lib/auth/session'
+import { can, canViewMoney, requireSession } from '@/lib/auth/session'
 import { searchCustomers } from '@/lib/data/customers'
 import { SEGMENTS, type Segment } from '@/lib/domain/labels'
 import { formatPhone } from '@/lib/domain/phone'
@@ -42,7 +42,7 @@ export default async function CustomersPage({ searchParams }: PageProps<'/client
         {segment && <input type="hidden" name="segmento" value={segment} />}
       </form>
 
-      {seeAll && (
+      {canViewMoney(session) && (
         <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
           {[null, ...(Object.keys(SEGMENTS) as Segment[])].map((s) => (
             <Link

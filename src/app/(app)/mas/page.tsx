@@ -7,16 +7,16 @@ import {
 import { PageHeader } from '@/components/ui/page-header'
 import { SectionTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { can, requireSession, type Permission } from '@/lib/auth/session'
+import { can, canViewCommissions, canViewSales, requireSession, type AppSession, type Permission } from '@/lib/auth/session'
 import { signOut } from '@/lib/actions/auth'
 
 export const metadata: Metadata = { title: 'Más' }
 
-type Item = { href: string; label: string; icon: typeof Receipt; any: Permission[] | 'all'; hint?: string }
+type Item = { href: string; label: string; icon: typeof Receipt; any: Permission[] | 'all' | ((s: AppSession) => boolean) }
 
 const OPERATION: Item[] = [
-  { href: '/ventas', label: 'Ventas y caja', icon: Receipt, any: ['sales.read_all', 'sales.create'] },
-  { href: '/comisiones', label: 'Comisiones', icon: Percent, any: 'all' },
+  { href: '/ventas', label: 'Ventas y caja', icon: Receipt, any: canViewSales },
+  { href: '/comisiones', label: 'Comisiones', icon: Percent, any: canViewCommissions },
   { href: '/inventario', label: 'Inventario', icon: Package, any: 'all' },
   { href: '/esmaltes', label: 'Esmaltes', icon: Droplet, any: 'all' },
 ]
@@ -30,7 +30,8 @@ const ADMIN: Item[] = [
 
 export default async function MorePage() {
   const session = await requireSession()
-  const visible = (items: Item[]) => items.filter((i) => i.any === 'all' || i.any.some((p) => can(session, p)))
+  const visible = (items: Item[]) =>
+    items.filter((i) => (i.any === 'all' ? true : typeof i.any === 'function' ? i.any(session) : i.any.some((p) => can(session, p))))
   const admin = visible(ADMIN)
   const operation = visible(OPERATION).map((i) =>
     i.href === '/ventas' && !can(session, 'sales.read_all') ? { ...i, label: 'Mis ventas' } : i,

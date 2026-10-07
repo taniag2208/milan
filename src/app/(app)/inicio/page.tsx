@@ -153,7 +153,8 @@ async function AdminDashboard({ sp, firstName }: { session: AppSession; sp: Reco
 
 async function StaffHome({ session, firstName }: { session: AppSession; firstName: string }) {
   const today = todayLocal()
-  if (!session.staffId) {
+  const shared = !session.staffId
+  if (shared && !can(session, 'appointments.read_all')) {
     return (
       <>
         <PageHeader title={`Hola, ${firstName}`} subtitle={formatLongDate(today)} />
@@ -163,23 +164,27 @@ async function StaffHome({ session, firstName }: { session: AppSession; firstNam
   }
   const [appointments, sales] = await Promise.all([
     listAppointments({ fromISO: localDayStartISO(today), toISO: localDayStartISO(addDays(today, 1)), staffId: session.staffId }),
-    listSales({ fromISO: localDayStartISO(today), toISO: localDayStartISO(addDays(today, 1)), staffId: session.staffId }),
+    shared ? Promise.resolve([]) : listSales({ fromISO: localDayStartISO(today), toISO: localDayStartISO(addDays(today, 1)), staffId: session.staffId }),
   ])
+  const nowISO = new Date().toISOString()
   const current = appointments.find((a) => a.status === 'en_servicio')
-  const next = current ?? appointments.find((a) => ['pendiente', 'confirmada'].includes(a.status))
+  // Próxima: la siguiente pendiente/confirmada; si todas ya pasaron, la primera sin atender.
+  const pending = appointments.filter((a) => ['pendiente', 'confirmada'].includes(a.status))
+  const next = current ?? pending.find((a) => a.ends_at > nowISO) ?? pending[0]
   const soldToday = sales.reduce((s, x) => s + x.total, 0)
 
   return (
     <>
       <PageHeader title={`Hola, ${firstName}`} subtitle={formatLongDate(today)} />
 
-      <SectionTitle>{current ? 'Atendiendo ahora' : 'Tu próxima cita'}</SectionTitle>
+      <SectionTitle>{current ? 'Atendiendo ahora' : shared ? 'Próxima cita' : 'Tu próxima cita'}</SectionTitle>
       {next ? (
         <Card className="space-y-4">
           <Link href={`/agenda/${next.id}`} className="block">
             <p className="font-display text-4xl tabular">{formatTime(next.starts_at)}</p>
             <p className="mt-1 text-lg font-medium">{next.customers?.full_name}</p>
             <p className="text-ink-soft">{serviceNames(next)}</p>
+            {shared && next.staff && <p className="mt-1 text-sm text-ink-muted">Con {next.staff.display_name}</p>}
             {next.design_notes && <p className="mt-2 rounded-xl bg-cream/70 px-3 py-2 text-sm text-ink-soft">{next.design_notes}</p>}
           </Link>
           <PrimaryAction id={next.id} status={next.status} />
@@ -190,14 +195,18 @@ async function StaffHome({ session, firstName }: { session: AppSession; firstNam
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         <MiniStat label="Citas hoy" value={appointments.filter((a) => !['cancelada', 'no_asistio'].includes(a.status)).length} />
-        <MiniStat label="Vendido hoy" value={formatCOP(soldToday)} />
+        {shared ? (
+          <MiniStat label="Atendidas" value={appointments.filter((a) => a.status === 'finalizada').length} />
+        ) : (
+          <MiniStat label="Vendido hoy" value={formatCOP(soldToday)} />
+        )}
       </div>
 
       {appointments.length > 0 && (
         <>
-          <SectionTitle>Tu agenda de hoy</SectionTitle>
+          <SectionTitle>{shared ? 'Agenda de hoy' : 'Tu agenda de hoy'}</SectionTitle>
           <div className="space-y-2">
-            {appointments.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={false} />)}
+            {appointments.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={shared} />)}
           </div>
         </>
       )}

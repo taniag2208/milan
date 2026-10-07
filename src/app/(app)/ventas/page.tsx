@@ -7,7 +7,8 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Badge } from '@/components/ui/badge'
 import { RangePicker, parseRangeKey } from '@/components/ui/range-picker'
 import { Bars } from '@/components/dashboard/bars'
-import { can, requirePermission } from '@/lib/auth/session'
+import { redirect } from 'next/navigation'
+import { can, canViewSales, requireSession } from '@/lib/auth/session'
 import { listSales, summarizeByPayment } from '@/lib/data/sales'
 import { type RangeKey, addDays, formatShortDate, formatTime, localDayStartISO, resolveRange, toLocalDate, todayLocal } from '@/lib/domain/dates'
 import { formatCOP } from '@/lib/domain/money'
@@ -16,7 +17,8 @@ export const metadata: Metadata = { title: 'Ventas' }
 const RANGES: RangeKey[] = ['hoy', 'semana', 'mes', 'personalizado']
 
 export default async function SalesPage({ searchParams }: PageProps<'/ventas'>) {
-  const session = await requirePermission('sales.read_all', 'sales.create')
+  const session = await requireSession()
+  if (!canViewSales(session)) redirect('/inicio')
   const sp = await searchParams
   const seeAll = can(session, 'sales.read_all')
   const rangeKey = parseRangeKey(sp.rango, RANGES)

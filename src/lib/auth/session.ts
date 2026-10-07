@@ -73,3 +73,18 @@ export async function requirePermission(...anyOf: Permission[]): Promise<AppSess
   if (!anyOf.some((p) => can(session, p))) redirect('/inicio')
   return session
 }
+
+/** Ventas: administración ve todas; una profesional solo las suyas. Un usuario compartido no las ve. */
+export function canViewSales(session: AppSession): boolean {
+  return can(session, 'sales.read_all') || (can(session, 'sales.create') && Boolean(session.staffId))
+}
+
+/** Comisiones: administración ve todas; una profesional solo las suyas. */
+export function canViewCommissions(session: AppSession): boolean {
+  return can(session, 'commissions.read_all') || Boolean(session.staffId)
+}
+
+/** Montos de dinero de clientas (total gastado, valores del historial). */
+export function canViewMoney(session: AppSession): boolean {
+  return can(session, 'sales.read_all')
+}
