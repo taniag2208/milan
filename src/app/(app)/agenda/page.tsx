@@ -7,7 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ButtonLink } from '@/components/ui/button'
 import { SectionTitle } from '@/components/ui/card'
 import { cn } from '@/components/ui/cn'
-import { AppointmentCard } from '@/components/agenda/appointment-card'
+import { AppointmentCard, AppointmentChip } from '@/components/agenda/appointment-card'
 import { can, requireSession } from '@/lib/auth/session'
 import { listAppointments, type AppointmentListItem } from '@/lib/data/appointments'
 import { getSettings } from '@/lib/data/settings'
@@ -68,6 +68,7 @@ export default async function AgendaPage({ searchParams }: PageProps<'/agenda'>)
         ) : undefined}
       />
 
+      <div className="lg:max-w-md">
       <Segmented
         active={view}
         items={[
@@ -76,9 +77,10 @@ export default async function AgendaPage({ searchParams }: PageProps<'/agenda'>)
           { key: 'lista', label: 'Lista', href: href({ vista: 'lista', fecha: null }) },
         ]}
       />
+      </div>
 
       {view !== 'lista' && (
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between lg:max-w-md">
           <Link href={href({ fecha: addDays(date, -step) })} aria-label="Anterior" className="grid size-11 place-items-center rounded-full text-ink-soft hover:bg-cream">
             <ChevronLeft className="size-5" />
           </Link>
@@ -141,7 +143,9 @@ function DayList({ appointments, showStaff, closed, canCreate, date }: {
       <p className="px-1 text-sm text-ink-muted">
         {active.length} {active.length === 1 ? 'cita' : 'citas'} · {active.filter((a) => a.status === 'finalizada').length} atendidas
       </p>
-      {appointments.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={showStaff} />)}
+      <div className="space-y-2.5 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
+        {appointments.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={showStaff} />)}
+      </div>
     </div>
   )
 }
@@ -150,25 +154,51 @@ function WeekList({ appointments, weekStart, showStaff, today }: {
   appointments: AppointmentListItem[]; weekStart: string; showStaff: boolean; today: string
 }) {
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+  const byDay = (d: string) => appointments.filter((a) => toLocalDate(a.starts_at) === d)
   return (
-    <div>
-      {days.map((d) => {
-        const items = appointments.filter((a) => toLocalDate(a.starts_at) === d)
-        return (
-          <section key={d}>
-            <SectionTitle className={cn('flex items-center justify-between', d === today && 'text-ink')}>
-              <Link href={`/agenda?fecha=${d}`}>{weekdayName(d)} {Number(d.slice(8))}</Link>
-              <span className="normal-case tracking-normal">{items.length || ''}</span>
-            </SectionTitle>
-            {items.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-line px-4 py-3 text-sm text-ink-muted">Sin citas</p>
-            ) : (
-              <div className="space-y-2">{items.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={showStaff} />)}</div>
-            )}
-          </section>
-        )
-      })}
-    </div>
+    <>
+      {/* Celular: lista por día */}
+      <div className="lg:hidden">
+        {days.map((d) => {
+          const items = byDay(d)
+          return (
+            <section key={d}>
+              <SectionTitle className={cn('flex items-center justify-between', d === today && 'text-ink')}>
+                <Link href={`/agenda?fecha=${d}`}>{weekdayName(d)} {Number(d.slice(8))}</Link>
+                <span className="normal-case tracking-normal">{items.length || ''}</span>
+              </SectionTitle>
+              {items.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-line px-4 py-3 text-sm text-ink-muted">Sin citas</p>
+              ) : (
+                <div className="space-y-2">{items.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={showStaff} />)}</div>
+              )}
+            </section>
+          )
+        })}
+      </div>
+
+      {/* Escritorio: calendario de 7 columnas */}
+      <div className="hidden gap-2 lg:grid lg:grid-cols-7">
+        {days.map((d) => {
+          const items = byDay(d)
+          return (
+            <div key={d} className={cn('min-h-64 rounded-2xl p-2', d === today ? 'bg-beige/50' : 'bg-cream/40')}>
+              <Link href={`/agenda?fecha=${d}`} className="mb-2 flex items-baseline justify-between px-1">
+                <span className="text-xs uppercase tracking-wider text-ink-muted">{weekdayName(d, true)}</span>
+                <span className={cn('font-display text-xl', d === today ? 'text-ink' : 'text-ink-soft')}>{Number(d.slice(8))}</span>
+              </Link>
+              <div className="space-y-1.5">
+                {items.length === 0 ? (
+                  <p className="px-1 text-xs text-ink-muted">—</p>
+                ) : (
+                  items.map((a) => <AppointmentChip key={a.id} appointment={a} />)
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </>
   )
 }
 
@@ -194,7 +224,7 @@ function UpcomingList({ appointments, showStaff, today, canCreate }: {
       {[...groups.entries()].map(([d, items]) => (
         <section key={d}>
           <SectionTitle>{d === today ? 'Hoy' : d === addDays(today, 1) ? 'Mañana' : formatLongDate(d)}</SectionTitle>
-          <div className="space-y-2">{items.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={showStaff} />)}</div>
+          <div className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">{items.map((a) => <AppointmentCard key={a.id} appointment={a} showStaff={showStaff} />)}</div>
         </section>
       ))}
     </div>

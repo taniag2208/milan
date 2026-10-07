@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ButtonLink } from '@/components/ui/button'
 import { cn } from '@/components/ui/cn'
+import { DataTable, RowLink } from '@/components/ui/table'
+import { formatCOP } from '@/lib/domain/money'
 import { can, canViewMoney, requireSession } from '@/lib/auth/session'
 import { searchCustomers } from '@/lib/data/customers'
 import { SEGMENTS, type Segment } from '@/lib/domain/labels'
@@ -20,6 +22,7 @@ export default async function CustomersPage({ searchParams }: PageProps<'/client
   const segment = (Object.keys(SEGMENTS) as Segment[]).includes(sp.segmento as Segment) ? (sp.segmento as Segment) : null
   const customers = await searchCustomers({ q, segment })
   const seeAll = can(session, 'customers.read_all')
+  const money = canViewMoney(session)
   const link = (seg: Segment | null) => {
     const p = new URLSearchParams()
     if (q) p.set('q', q)
@@ -30,7 +33,7 @@ export default async function CustomersPage({ searchParams }: PageProps<'/client
   return (
     <>
       <PageHeader title="Clientes" subtitle={seeAll ? undefined : 'Clientas que has atendido'} />
-      <form method="get" className="relative">
+      <form method="get" className="relative lg:max-w-md">
         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-muted" />
         <input
           type="search"
@@ -68,7 +71,24 @@ export default async function CustomersPage({ searchParams }: PageProps<'/client
             action={can(session, 'customers.manage') ? <ButtonLink href="/clientes/nueva">+ Nueva clienta</ButtonLink> : undefined}
           />
         ) : (
-          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-card">
+          <>
+          <DataTable head={['Clienta', 'Teléfono', 'Última visita', 'Visitas', ...(money ? ['Gastado'] : []), '']}>
+            {customers.map((c) => (
+              <RowLink
+                key={c.id}
+                href={`/clientes/${c.id}`}
+                cells={[
+                  <span key="n" className="font-medium">{c.full_name}</span>,
+                  <span key="p" className="tabular text-ink-soft">{formatPhone(c.phone_e164)}</span>,
+                  <span key="l" className="text-ink-soft">{c.stats?.last_visit_at ? formatShortDate(toLocalDate(c.stats.last_visit_at)) : '—'}</span>,
+                  <span key="v" className="tabular">{c.stats?.visits ?? 0}</span>,
+                  ...(money ? [<span key="g" className="tabular">{formatCOP(c.stats?.total_spent ?? 0)}</span>] : []),
+                  <span key="s" className="flex flex-wrap gap-1">{c.segments.map((s) => <Badge key={s} tone={s === 'vip' ? 'dark' : s === 'por_reactivar' || s === 'inactiva' ? 'warning' : 'info'}>{SEGMENTS[s]}</Badge>)}</span>,
+                ]}
+              />
+            ))}
+          </DataTable>
+          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-card lg:hidden">
             {customers.map((c) => (
               <li key={c.id}>
                 <Link href={`/clientes/${c.id}`} className="flex items-center gap-3 px-4 py-3 active:bg-cream/60">
@@ -91,6 +111,7 @@ export default async function CustomersPage({ searchParams }: PageProps<'/client
               </li>
             ))}
           </ul>
+          </>
         )}
       </div>
     </>

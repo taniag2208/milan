@@ -6,6 +6,7 @@ import { Badge, stockTone } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ButtonLink } from '@/components/ui/button'
 import { Segmented } from '@/components/ui/segmented'
+import { DataTable, RowLink } from '@/components/ui/table'
 import { can, requireSession } from '@/lib/auth/session'
 import { formatQty, listInventory } from '@/lib/data/inventory'
 import { STOCK_STATUS, type StockStatus } from '@/lib/domain/labels'
@@ -26,7 +27,8 @@ export default async function InventoryPage({ searchParams }: PageProps<'/invent
         backHref="/mas"
         action={<ButtonLink href="/esmaltes" size="sm" variant="soft"><Droplet className="size-4" /> Esmaltes</ButtonLink>}
       />
-      <form method="get" className="relative mb-3">
+      <div className="lg:flex lg:items-center lg:gap-4">
+      <form method="get" className="relative mb-3 lg:mb-0 lg:w-80">
         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-muted" />
         <input type="search" name="q" defaultValue={q} placeholder="Buscar producto" className="h-12 w-full rounded-full border border-line bg-card pl-10 pr-4 focus:border-almond focus:outline-none" />
       </form>
@@ -37,7 +39,9 @@ export default async function InventoryPage({ searchParams }: PageProps<'/invent
           { key: 'stock_bajo', label: 'Stock bajo', href: qs('stock_bajo') },
           { key: 'agotado', label: 'Agotados', href: qs('agotado') },
         ]}
+        className="lg:w-96"
       />
+      </div>
       <div className="mt-4">
         {items.length === 0 ? (
           <EmptyState
@@ -47,7 +51,24 @@ export default async function InventoryPage({ searchParams }: PageProps<'/invent
             action={can(session, 'inventory.manage') && !status ? <ButtonLink href="/inventario/nuevo">+ Nuevo producto</ButtonLink> : undefined}
           />
         ) : (
-          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-card">
+          <>
+          <DataTable head={['Producto', 'Categoría', 'Cantidad', 'Mínimo', 'Proveedor', 'Estado']}>
+            {items.map((i) => (
+              <RowLink
+                key={i.id}
+                href={`/inventario/${i.id}`}
+                cells={[
+                  <span key="n" className="font-medium">{i.name}</span>,
+                  <span key="c" className="text-ink-soft">{i.category}</span>,
+                  <span key="q" className="tabular">{formatQty(i.quantity)} {i.unit}</span>,
+                  <span key="m" className="tabular text-ink-soft">{formatQty(i.min_stock)}</span>,
+                  <span key="p" className="text-ink-soft">{i.supplier ?? '—'}</span>,
+                  <Badge key="s" tone={stockTone[i.stock_status]}>{STOCK_STATUS[i.stock_status]}</Badge>,
+                ]}
+              />
+            ))}
+          </DataTable>
+          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-card lg:hidden">
             {items.map((i) => (
               <li key={i.id}>
                 <Link href={`/inventario/${i.id}`} className="flex items-center gap-3 px-4 py-3 active:bg-cream/60">
@@ -63,6 +84,7 @@ export default async function InventoryPage({ searchParams }: PageProps<'/invent
               </li>
             ))}
           </ul>
+          </>
         )}
       </div>
     </>

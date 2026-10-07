@@ -273,7 +273,7 @@ export function AppointmentForm({ mode, categories, staff, defaults, canOverride
         )}
       </section>
 
-      <div className="sticky bottom-20 z-10 -mx-4 bg-gradient-to-t from-page via-page to-transparent px-4 pb-2 pt-4">
+      <div className="sticky bottom-20 z-10 -mx-4 bg-gradient-to-t from-page via-page to-transparent px-4 pb-2 pt-4 lg:bottom-0 lg:mx-0 lg:px-0 lg:pb-6">
         <SubmitButton size="lg" block>{mode === 'create' ? 'Guardar cita' : 'Guardar cambios'}</SubmitButton>
       </div>
     </form>

@@ -19,7 +19,7 @@ export default async function WhatsappPage() {
   const conversations = await listConversations()
   const configured = canReceive() && canSend()
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-3xl">
       <PageHeader title="WhatsApp" subtitle="Conversaciones" backHref="/mas" />
       {!configured && (
         <Alert tone="warning" className="mb-4">
@@ -47,6 +47,6 @@ export default async function WhatsappPage() {
           ))}
         </ul>
       )}
-    </>
+    </div>
   )
 }

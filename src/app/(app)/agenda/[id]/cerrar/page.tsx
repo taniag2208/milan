@@ -21,7 +21,7 @@ export default async function CloseAppointmentPage({ params }: PageProps<'/agend
     .filter((x): x is { service: NonNullable<typeof x.service>; price: number } => Boolean(x.service))
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Finalizar servicio" subtitle={a.customers?.full_name} backHref={`/agenda/${id}`} />
       <CloseSaleForm
         appointmentId={a.id}
@@ -33,6 +33,6 @@ export default async function CloseAppointmentPage({ params }: PageProps<'/agend
         defaultStaffId={a.staff_id}
         paymentMethods={paymentMethods}
       />
-    </>
+    </div>
   )
 }

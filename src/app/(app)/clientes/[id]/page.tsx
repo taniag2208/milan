@@ -32,7 +32,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<'
   const canSchedule = can(session, 'appointments.manage_all') || can(session, 'appointments.create')
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-3xl">
       <PageHeader
         title={c.full_name}
         subtitle={formatPhone(c.phone_e164)}
@@ -139,7 +139,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<'
           ))}
         </ol>
       )}
-    </>
+    </div>
   )
 }
 

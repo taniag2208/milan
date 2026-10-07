@@ -22,8 +22,9 @@ export default async function ServicesPage({ searchParams }: PageProps<'/servici
     <>
       <PageHeader title="Servicios y precios" backHref="/mas" action={<ButtonLink href="/servicios/nuevo" size="sm" variant="soft">+ Servicio</ButtonLink>} />
       <Flash ok={sp.ok} />
+      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-6">
       {categories.map((c) => (
-        <section key={c.id}>
+        <section key={c.id} className="mt-6 first:mt-0 lg:mt-0">
           <SectionTitle>{c.name}</SectionTitle>
           <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-card">
             {c.services.length === 0 && <li className="px-4 py-3 text-sm text-ink-muted">Sin servicios</li>}
@@ -46,12 +47,19 @@ export default async function ServicesPage({ searchParams }: PageProps<'/servici
           </ul>
         </section>
       ))}
+      </div>
+      <div className="lg:mt-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-6">
+      <section className="mt-6 lg:mt-0">
       <SectionTitle>Extras</SectionTitle>
       <Card className="py-1">
         <ExtrasManager extras={extras} categories={categories} services={services} />
       </Card>
+      </section>
+      <section className="mt-6 lg:mt-0">
       <SectionTitle>Categorías</SectionTitle>
       <CategoryForm />
+      </section>
+      </div>
     </>
   )
 }

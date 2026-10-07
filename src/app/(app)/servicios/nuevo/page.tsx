@@ -10,9 +10,9 @@ export default async function NewServicePage() {
   await requirePermission('services.manage')
   const { categories } = await getCatalog({ includeInactive: true })
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Nuevo servicio" backHref="/servicios" />
       <ServiceForm categories={categories} />
-    </>
+    </div>
   )
 }

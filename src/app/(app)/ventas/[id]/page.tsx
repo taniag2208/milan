@@ -26,7 +26,7 @@ export default async function SalePage({ params, searchParams }: PageProps<'/ven
   const paymentMethods = canManage ? await getPaymentMethods(true) : []
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={isNew ? 'Venta registrada' : 'Venta'} subtitle={`${formatShortDate(toLocalDate(sale.sold_at))} · ${formatTime(sale.sold_at)}`} backHref={isNew ? '/inicio' : '/ventas'} />
 
       {isNew && (
@@ -80,6 +80,6 @@ export default async function SalePage({ params, searchParams }: PageProps<'/ven
           <Card><SaleAdminActions saleId={sale.id} paymentMethodId={sale.payment_method_id} paymentMethods={paymentMethods} /></Card>
         </>
       )}
-    </>
+    </div>
   )
 }

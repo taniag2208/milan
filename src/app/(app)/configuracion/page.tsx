@@ -19,7 +19,7 @@ export default async function SettingsPage() {
     supabase.from('role_permissions').select('permission_key, roles!inner(key)').eq('roles.key', 'colaboradora').eq('permission_key', 'appointments.create'),
   ])
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-3xl">
       <PageHeader title="Configuración" backHref="/mas" />
       <SectionTitle>Negocio</SectionTitle>
       <Card><BusinessForm business={settings.business} /></Card>
@@ -33,6 +33,6 @@ export default async function SettingsPage() {
       <Card className="py-1"><PaymentMethodsForm methods={methods} /></Card>
       <SectionTitle>Reglas CRM</SectionTitle>
       <Card><CrmRulesForm rules={settings.crm_rules} categories={catalog.categories.map((c) => c.name)} /></Card>
-    </>
+    </div>
   )
 }

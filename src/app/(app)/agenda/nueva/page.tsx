@@ -21,7 +21,7 @@ export default async function NewAppointmentPage({ searchParams }: PageProps<'/a
   }
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Nueva cita" backHref={customer ? `/clientes/${customer.id}` : '/agenda'} />
       <AppointmentForm
         mode="create"
@@ -35,6 +35,6 @@ export default async function NewAppointmentPage({ searchParams }: PageProps<'/a
           time: typeof sp.hora === 'string' ? sp.hora : undefined,
         }}
       />
-    </>
+    </div>
   )
 }

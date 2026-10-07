@@ -15,11 +15,11 @@ export default async function UserPage({ params }: PageProps<'/equipo/usuario/[i
   const u = users.find((x) => x.id === id)
   if (!u) notFound()
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={u.full_name} subtitle="Usuario" backHref="/equipo" />
       <Card>
         <AccessForm profile={{ id: u.id, username: u.username, is_active: u.is_active, roleKey: u.roles?.key ?? 'admin' }} roles={roles} />
       </Card>
-    </>
+    </div>
   )
 }

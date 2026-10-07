@@ -36,3 +36,23 @@ export function AppointmentCard({ appointment: a, showStaff = true }: { appointm
     </Link>
   )
 }
+
+/** Versión compacta para el calendario semanal de escritorio. */
+export function AppointmentChip({ appointment: a }: { appointment: AppointmentListItem }) {
+  const muted = a.status === 'cancelada' || a.status === 'no_asistio'
+  return (
+    <Link
+      href={`/agenda/${a.id}`}
+      className={cn(
+        'block rounded-xl border border-line bg-card px-2.5 py-2 text-left shadow-[var(--shadow-soft)] transition-colors hover:bg-cream/50',
+        muted && 'opacity-50',
+      )}
+      style={{ borderLeft: `3px solid ${a.staff?.color ?? 'var(--color-taupe)'}` }}
+    >
+      <p className="tabular text-xs font-medium text-ink">{formatTime(a.starts_at)}</p>
+      <p className={cn('truncate text-sm', muted && 'line-through')}>{a.customers?.full_name ?? 'Clienta'}</p>
+      <p className="truncate text-xs text-ink-muted">{serviceNames(a)}</p>
+      <p className="mt-1 text-[11px] text-ink-muted">{APPOINTMENT_STATUS[a.status]}{a.staff ? ` · ${a.staff.display_name}` : ''}</p>
+    </Link>
+  )
+}

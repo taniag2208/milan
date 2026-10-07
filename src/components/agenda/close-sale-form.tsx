@@ -254,7 +254,7 @@ export function CloseSaleForm({
 
       {error && <Alert>{error}</Alert>}
 
-      <div className="sticky bottom-20 z-10 -mx-4 bg-gradient-to-t from-page via-page to-transparent px-4 pb-2 pt-4">
+      <div className="sticky bottom-20 z-10 -mx-4 bg-gradient-to-t from-page via-page to-transparent px-4 pb-2 pt-4 lg:bottom-0 lg:mx-0 lg:px-0 lg:pb-6">
         <Button size="lg" block onClick={submit} disabled={pending} className="uppercase tracking-[0.12em]">
           {pending ? 'Registrando…' : `Confirmar venta · ${formatCOP(totals.total)}`}
         </Button>

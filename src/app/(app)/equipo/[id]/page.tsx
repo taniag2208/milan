@@ -17,7 +17,7 @@ export default async function MemberPage({ params, searchParams }: PageProps<'/e
   const m = team.find((t) => t.id === id)
   if (!m) notFound()
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={m.display_name} subtitle="Profesional" backHref="/equipo" />
       <Flash ok={sp.ok} />
       <Card><EditMemberForm member={m} /></Card>
@@ -44,6 +44,6 @@ export default async function MemberPage({ params, searchParams }: PageProps<'/e
           </Card>
         </>
       )}
-    </>
+    </div>
   )
 }

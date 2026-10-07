@@ -14,9 +14,9 @@ export default async function EditServicePage({ params }: PageProps<'/servicios/
   const service = services.find((s) => s.id === id)
   if (!service) notFound()
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={service.name} subtitle="Editar servicio" backHref="/servicios" />
       <ServiceForm service={service} categories={categories} />
-    </>
+    </div>
   )
 }
