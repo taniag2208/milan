@@ -15,13 +15,13 @@ export function PolishForm({ polish, photoUrl, today }: { polish?: NailPolish; p
       {state.error && <Alert>{state.error}</Alert>}
       {state.message && <Alert tone="success">{state.message}</Alert>}
       {polish && <input type="hidden" name="id" value={polish.id} />}
-      <Field label="Foto"><ImagePicker name="photo" label="Tomar o elegir foto" initialUrl={photoUrl} /></Field>
+      <Field label="Foto" group><ImagePicker name="photo" label="Tomar o elegir foto" initialUrl={photoUrl} /></Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Marca"><Input name="brand" defaultValue={polish?.brand} required autoCapitalize="words" /></Field>
         <Field label="Referencia / número"><Input name="reference" defaultValue={polish?.reference ?? ''} /></Field>
       </div>
       <Field label="Nombre o color"><Input name="color_name" defaultValue={polish?.color_name} required /></Field>
-      <Field label="Tipo">
+      <Field label="Tipo" group>
         <ChoiceChips name="polish_type" defaultValue={polish?.polish_type ?? 'semipermanente'} options={Object.entries(POLISH_TYPES).map(([value, label]) => ({ value, label }))} />
       </Field>
       <div className="grid grid-cols-2 gap-3">

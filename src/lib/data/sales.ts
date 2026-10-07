@@ -20,7 +20,7 @@ export async function listSales(opts: { fromISO: string; toISO: string; staffId?
     .limit(500)
   if (opts.staffId) q = q.eq('staff_id', opts.staffId)
   if (!opts.includeVoided) q = q.eq('status', 'registrada')
-  const { data, error } = await q.returns<SaleListItem[]>()
+  const { data, error } = await q.overrideTypes<SaleListItem[], { merge: false }>()
   if (error) throw new Error(error.message)
   return data ?? []
 }

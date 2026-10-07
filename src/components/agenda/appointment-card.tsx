@@ -16,9 +16,9 @@ export function AppointmentCard({ appointment: a, showStaff = true }: { appointm
         muted && 'opacity-60',
       )}
     >
-      <div className="w-16 shrink-0 pt-0.5">
-        <p className="tabular text-[15px] font-medium text-ink">{formatTime(a.starts_at).replace(' ', ' ')}</p>
-        <p className="tabular text-xs text-ink-muted">{formatTime(a.ends_at)}</p>
+      <div className="w-[4.6rem] shrink-0 pt-0.5">
+        <p className="tabular whitespace-nowrap text-sm font-medium text-ink">{formatTime(a.starts_at)}</p>
+        <p className="tabular whitespace-nowrap text-xs text-ink-muted">{formatTime(a.ends_at)}</p>
       </div>
       <div className="min-w-0 flex-1 border-l border-line pl-3">
         <div className="flex items-start justify-between gap-2">

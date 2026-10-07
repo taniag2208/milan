@@ -145,8 +145,8 @@ export async function addLoginToStaff(_prev: ActionState, fd: FormData): Promise
   const supabase = await createClient()
   const { error } = await supabase.from('staff').update({ profile_id: res.userId }).eq('id', staffId)
   if (error) return { error: friendlyError(error) }
-  revalidatePath(`/equipo/${staffId}`)
-  return { ok: true, message: 'Usuario creado' }
+  revalidatePath('/equipo')
+  redirect(`/equipo/${staffId}?ok=usuario`)
 }
 
 export async function updateAccess(_prev: ActionState, fd: FormData): Promise<ActionState> {

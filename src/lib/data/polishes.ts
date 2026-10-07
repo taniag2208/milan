@@ -11,7 +11,7 @@ export async function listPolishes(opts: { q?: string; status?: PolishStatus | '
   else q = q.neq('status', 'dado_de_baja')
   const term = opts.q?.trim().replace(/[%,()]/g, ' ')
   if (term) q = q.or(`brand.ilike.%${term}%,color_name.ilike.%${term}%,reference.ilike.%${term}%,code.ilike.%${term}%`)
-  const { data } = await q.returns<NailPolish[]>()
+  const { data } = await q.overrideTypes<NailPolish[], { merge: false }>()
   return data ?? []
 }
 
@@ -26,7 +26,7 @@ export async function getPolish(id: string) {
       .select('*, profiles(full_name)')
       .eq('polish_id', id)
       .order('changed_at', { ascending: false })
-      .returns<PolishHistoryItem[]>(),
+      .overrideTypes<PolishHistoryItem[], { merge: false }>(),
   ])
   return polish ? { polish, history: history ?? [] } : null
 }

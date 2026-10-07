@@ -11,7 +11,7 @@ export async function listAudit(limit = 100) {
     .select('*')
     .order('created_at', { ascending: false })
     .limit(limit)
-    .returns<AuditLog[]>()
+    .overrideTypes<AuditLog[], { merge: false }>()
   const actorIds = [...new Set((logs ?? []).map((l) => l.actor_id).filter(Boolean))] as string[]
   const { data: actors } = actorIds.length
     ? await supabase.from('profiles').select('id, full_name').in('id', actorIds)

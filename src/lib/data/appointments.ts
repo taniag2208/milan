@@ -28,7 +28,7 @@ export async function listAppointments(opts: {
     .limit(opts.limit ?? 500)
   if (opts.staffId) q = q.eq('staff_id', opts.staffId)
   if (opts.statuses?.length) q = q.in('status', opts.statuses)
-  const { data, error } = await q.returns<AppointmentListItem[]>()
+  const { data, error } = await q.overrideTypes<AppointmentListItem[], { merge: false }>()
   if (error) throw new Error(error.message)
   return (data ?? []).map(sortServices)
 }

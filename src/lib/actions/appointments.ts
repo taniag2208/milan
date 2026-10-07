@@ -35,7 +35,7 @@ export async function getAvailableTimes(date: string, serviceIds: string[], staf
 }
 
 const appointmentSchema = z.object({
-  staff_id: z.uuid({ message: 'Selecciona la profesional' }),
+  staff_id: z.uuid({ error: 'Selecciona la profesional' }),
   date: z.string().refine(isValidDate, 'Selecciona la fecha'),
   time: z.string().regex(/^\d{2}:\d{2}$/, 'Selecciona la hora'),
   service_ids: z.array(z.uuid()).min(1, 'Selecciona al menos un servicio'),
@@ -148,8 +148,8 @@ export async function changeAppointmentStatus(_prev: ActionState, formData: Form
 
 const completeSchema = z.object({
   appointmentId: z.uuid(),
-  staffId: z.uuid({ message: 'Selecciona quién atendió' }),
-  paymentMethodId: z.uuid({ message: 'Selecciona el medio de pago' }),
+  staffId: z.uuid({ error: 'Selecciona quién atendió' }),
+  paymentMethodId: z.uuid({ error: 'Selecciona el medio de pago' }),
   discount: z.number().int().min(0),
   notes: z.string().max(500).optional(),
   items: z

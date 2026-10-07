@@ -249,7 +249,7 @@ export function AppointmentForm({ mode, categories, staff, defaults, canOverride
       {/* Detalles */}
       <section className="space-y-3">
         <SectionTitle>Detalles</SectionTitle>
-        <Field label="Canal de origen">
+        <Field label="Canal de origen" group>
           <ChoiceChips
             name="channel"
             columns={3}
@@ -260,7 +260,7 @@ export function AppointmentForm({ mode, categories, staff, defaults, canOverride
         <Field label="Diseño solicitado" htmlFor="design_notes">
           <Textarea id="design_notes" name="design_notes" defaultValue={defaults.designNotes ?? ''} placeholder="Ej. francesa nude, almendra corta" />
         </Field>
-        <Field label="Referencia (opcional)" error={fe.reference}>
+        <Field label="Referencia (opcional)" error={fe.reference} group>
           <ImagePicker name="reference" label="Foto del diseño" />
         </Field>
         <Field label="Notas" htmlFor="notes">

@@ -11,6 +11,7 @@ export function Field({
   children,
   className,
   htmlFor,
+  group,
 }: {
   label?: ReactNode
   error?: string
@@ -18,7 +19,37 @@ export function Field({
   children: ReactNode
   className?: string
   htmlFor?: string
+  /** Para grupos de botones/opciones: usa role="group" en vez de <label>. */
+  group?: boolean
 }) {
+  const message = error ? (
+    <p className="px-1 text-sm text-danger" role="alert">{error}</p>
+  ) : hint ? (
+    <p className="px-1 text-xs text-ink-muted">{hint}</p>
+  ) : null
+  const labelText = label && <span className="block px-1 text-sm font-medium text-ink-soft">{label}</span>
+
+  if (label && group) {
+    return (
+      <div role="group" aria-label={typeof label === 'string' ? label : undefined} className={cn('space-y-1.5', className)}>
+        {labelText}
+        {children}
+        {message}
+      </div>
+    )
+  }
+  // Sin htmlFor, el <label> envuelve al control para asociarlos (accesibilidad).
+  if (label && !htmlFor) {
+    return (
+      <div className={cn('space-y-1.5', className)}>
+        <label className="block space-y-1.5">
+          {labelText}
+          {children}
+        </label>
+        {message}
+      </div>
+    )
+  }
   return (
     <div className={cn('space-y-1.5', className)}>
       {label && (
@@ -27,11 +58,7 @@ export function Field({
         </label>
       )}
       {children}
-      {error ? (
-        <p className="px-1 text-sm text-danger" role="alert">{error}</p>
-      ) : hint ? (
-        <p className="px-1 text-xs text-ink-muted">{hint}</p>
-      ) : null}
+      {message}
     </div>
   )
 }

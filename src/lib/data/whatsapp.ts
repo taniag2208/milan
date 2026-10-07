@@ -14,7 +14,7 @@ export async function listConversations(includeClosed = false) {
     .order('last_message_at', { ascending: false, nullsFirst: false })
     .limit(100)
   if (!includeClosed) q = q.neq('mode', 'CLOSED')
-  const { data } = await q.returns<ConversationListItem[]>()
+  const { data } = await q.overrideTypes<ConversationListItem[], { merge: false }>()
   return data ?? []
 }
 
@@ -32,7 +32,7 @@ export async function getConversation(id: string) {
       .eq('conversation_id', id)
       .order('created_at')
       .limit(300)
-      .returns<WhatsappMessage[]>(),
+      .overrideTypes<WhatsappMessage[], { merge: false }>(),
   ])
   return conversation ? { conversation, messages: messages ?? [] } : null
 }

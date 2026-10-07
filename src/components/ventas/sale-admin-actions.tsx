@@ -17,7 +17,7 @@ export function SaleAdminActions({ saleId, paymentMethodId, paymentMethods }: {
     <div className="space-y-4">
       <form action={payAction} className="space-y-2">
         <input type="hidden" name="sale_id" value={saleId} />
-        <Field label="Corregir medio de pago">
+        <Field label="Corregir medio de pago" group>
           <div className="flex gap-2">
             <Select name="payment_method_id" defaultValue={paymentMethodId} className="flex-1">
               {paymentMethods.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}

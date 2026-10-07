@@ -6,6 +6,7 @@ const MESSAGES: Record<string, string> = {
   guardado: 'Cambios guardados',
   creado: 'Registro creado',
   creada_clienta: 'Clienta creada',
+  usuario: 'Usuario creado. Ya puede ingresar con su usuario y contraseña.',
 }
 
 /** Mensaje de confirmación tras redirigir (?ok=...). */

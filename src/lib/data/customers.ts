@@ -25,12 +25,12 @@ export async function searchCustomers(opts: { q?: string; segment?: Segment | nu
       : q.ilike('full_name', `%${safe}%`)
   }
   if (ids) q = q.in('id', ids)
-  const { data: customers } = await q.returns<Customer[]>()
+  const { data: customers } = await q.overrideTypes<Customer[], { merge: false }>()
   if (!customers?.length) return []
 
   const customerIds = customers.map((c) => c.id)
   const [{ data: stats }, { data: segments }] = await Promise.all([
-    supabase.from('customer_stats').select('*').in('customer_id', customerIds).returns<CustomerStats[]>(),
+    supabase.from('customer_stats').select('*').in('customer_id', customerIds).overrideTypes<CustomerStats[], { merge: false }>(),
     supabase.from('customer_segments').select('*').in('customer_id', customerIds),
   ])
   return customers.map((c) => ({
@@ -60,7 +60,7 @@ export async function getCustomerDetail(id: string, nowISO: string) {
       .gte('starts_at', nowISO)
       .order('starts_at')
       .limit(3)
-      .returns<AppointmentListItem[]>(),
+      .overrideTypes<AppointmentListItem[], { merge: false }>(),
     supabase
       .from('sales')
       .select('*, staff(display_name), sale_items(description, line_total, kind), appointments(notes, design_notes)')
@@ -68,7 +68,7 @@ export async function getCustomerDetail(id: string, nowISO: string) {
       .eq('status', 'registrada')
       .order('sold_at', { ascending: false })
       .limit(50)
-      .returns<CustomerHistoryItem[]>(),
+      .overrideTypes<CustomerHistoryItem[], { merge: false }>(),
   ])
   if (!customer) return null
   return { customer, stats, segments: seg?.segments ?? [], upcoming: upcoming ?? [], history: history ?? [] }

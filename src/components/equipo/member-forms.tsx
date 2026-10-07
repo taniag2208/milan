@@ -56,7 +56,7 @@ export function NewMemberForm({ roles }: { roles: Role[] }) {
       {attends && (
         <>
           <Field label="Comisión (%)"><Input name="percent" type="number" inputMode="decimal" min={0} max={100} step="0.5" placeholder="50" required /></Field>
-          <Field label="Color en agenda"><ColorPicker /></Field>
+          <Field label="Color en agenda" group><ColorPicker /></Field>
         </>
       )}
       <label className="flex items-center justify-between rounded-2xl border border-line bg-card px-4 py-3">
@@ -79,7 +79,7 @@ export function EditMemberForm({ member }: { member: { id: string; display_name:
       <Field label="Comisión (%)" hint="Aplica a ventas nuevas; las anteriores conservan su porcentaje.">
         <Input name="percent" type="number" inputMode="decimal" min={0} max={100} step="0.5" defaultValue={member.percent ?? ''} />
       </Field>
-      <Field label="Color en agenda"><ColorPicker defaultValue={member.color} /></Field>
+      <Field label="Color en agenda" group><ColorPicker defaultValue={member.color} /></Field>
       <label className="flex items-center justify-between rounded-2xl border border-line bg-card px-4 py-3">
         Activa en agenda
         <input type="checkbox" name="is_active" defaultChecked={member.is_active} className="size-5 accent-ink" />

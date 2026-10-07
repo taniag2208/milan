@@ -32,6 +32,9 @@ export default async function MorePage() {
   const session = await requireSession()
   const visible = (items: Item[]) => items.filter((i) => i.any === 'all' || i.any.some((p) => can(session, p)))
   const admin = visible(ADMIN)
+  const operation = visible(OPERATION).map((i) =>
+    i.href === '/ventas' && !can(session, 'sales.read_all') ? { ...i, label: 'Mis ventas' } : i,
+  )
 
   return (
     <>
@@ -47,7 +50,7 @@ export default async function MorePage() {
       </div>
 
       <SectionTitle>Operación</SectionTitle>
-      <Menu items={visible(OPERATION)} />
+      <Menu items={operation} />
       {admin.length > 0 && (
         <>
           <SectionTitle>Administración</SectionTitle>

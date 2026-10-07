@@ -8,7 +8,7 @@ export async function listInventory(opts: { q?: string; status?: StockStatus | n
   let q = supabase.from('inventory_items').select('*').eq('is_active', true).order('category').order('name')
   if (opts.status) q = q.eq('stock_status', opts.status)
   if (opts.q?.trim()) q = q.ilike('name', `%${opts.q.trim().replace(/[%,()]/g, ' ')}%`)
-  const { data } = await q.returns<InventoryItem[]>()
+  const { data } = await q.overrideTypes<InventoryItem[], { merge: false }>()
   return data ?? []
 }
 
@@ -24,7 +24,7 @@ export async function getInventoryItem(id: string) {
       .eq('item_id', id)
       .order('created_at', { ascending: false })
       .limit(50)
-      .returns<MovementWithUser[]>(),
+      .overrideTypes<MovementWithUser[], { merge: false }>(),
   ])
   return item ? { item, movements: movements ?? [] } : null
 }
