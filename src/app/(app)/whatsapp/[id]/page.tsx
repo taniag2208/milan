@@ -25,7 +25,7 @@ export default async function ConversationPage({ params }: PageProps<'/whatsapp/
   const { conversation: c, messages } = data
   const contact = c.whatsapp_contacts
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-3xl">
       <PageHeader
         title={contact?.customers?.full_name ?? contact?.profile_name ?? 'Contacto'}
         subtitle={formatPhone(contact?.phone_e164)}
@@ -58,6 +58,6 @@ export default async function ConversationPage({ params }: PageProps<'/whatsapp/
         ))}
       </div>
       <ConversationControls id={c.id} mode={c.mode} canSend={canSend()} />
-    </>
+    </div>
   )
 }

@@ -73,3 +73,17 @@ export async function getCustomerDetail(id: string, nowISO: string) {
   if (!customer) return null
   return { customer, stats, segments: seg?.segments ?? [], upcoming: upcoming ?? [], history: history ?? [] }
 }
+
+/** Historial sin montos (para quien no ve ventas): citas finalizadas. */
+export async function getCustomerVisits(id: string): Promise<AppointmentListItem[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('appointments')
+    .select('*, customers(id, full_name, phone_e164), staff(id, display_name, color), appointment_services(price, duration_min, sort_order, services(id, name))')
+    .eq('customer_id', id)
+    .eq('status', 'finalizada')
+    .order('starts_at', { ascending: false })
+    .limit(50)
+    .overrideTypes<AppointmentListItem[], { merge: false }>()
+  return data ?? []
+}

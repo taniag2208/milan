@@ -11,9 +11,9 @@ export default async function NewItemPage() {
   const items = await listInventory({})
   const categories = [...new Set(items.map((i) => i.category))]
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Nuevo producto" backHref="/inventario" />
       <ItemForm categories={categories} />
-    </>
+    </div>
   )
 }

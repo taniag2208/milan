@@ -18,7 +18,7 @@ export default async function TeamPage({ searchParams }: PageProps<'/equipo'>) {
   const sp = await searchParams
   const [team, users] = await Promise.all([listTeam(), listUsersWithoutStaff()])
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-3xl">
       <PageHeader title="Equipo y usuarios" backHref="/mas" action={<ButtonLink href="/equipo/nuevo" size="sm" variant="soft">+ Agregar</ButtonLink>} />
       <Flash ok={sp.ok} />
       {!hasServiceRole() && (
@@ -61,6 +61,6 @@ export default async function TeamPage({ searchParams }: PageProps<'/equipo'>) {
           </ul>
         </>
       )}
-    </>
+    </div>
   )
 }

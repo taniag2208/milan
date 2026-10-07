@@ -10,9 +10,9 @@ export default async function NewMemberPage() {
   await requirePermission('users.manage')
   const roles = await listRoles()
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Agregar al equipo" backHref="/equipo" />
       <NewMemberForm roles={roles} />
-    </>
+    </div>
   )
 }

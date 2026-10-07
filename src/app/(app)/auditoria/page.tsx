@@ -39,7 +39,7 @@ export default async function AuditPage() {
   await requirePermission('audit.read')
   const logs = await listAudit(150)
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-4xl">
       <PageHeader title="Auditoría" subtitle="Últimos 150 cambios sensibles" backHref="/mas" />
       {logs.length === 0 ? (
         <EmptyState title="Sin registros" />
@@ -65,6 +65,6 @@ export default async function AuditPage() {
           })}
         </ul>
       )}
-    </>
+    </div>
   )
 }

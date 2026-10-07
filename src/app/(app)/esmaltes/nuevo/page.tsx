@@ -11,10 +11,10 @@ export default async function NewPolishPage({ searchParams }: PageProps<'/esmalt
   await requirePermission('polishes.manage')
   const sp = await searchParams
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Nuevo esmalte" backHref="/esmaltes" />
       <Flash ok={sp.ok} />
       <PolishForm today={todayLocal()} />
-    </>
+    </div>
   )
 }

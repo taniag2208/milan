@@ -15,9 +15,9 @@ export default async function EditCustomerPage({ params }: PageProps<'/clientes/
   const { data } = await supabase.from('customers').select('*').eq('id', id).maybeSingle<Customer>()
   if (!data) notFound()
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Editar clienta" backHref={`/clientes/${id}`} />
       <CustomerForm customer={data} />
-    </>
+    </div>
   )
 }

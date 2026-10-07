@@ -24,7 +24,7 @@ export default async function PolishPage({ params, searchParams }: PageProps<'/e
   const canReport = manage || can(session, 'polishes.report')
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={p.color_name} subtitle={`${p.brand} · ${p.code}`} backHref="/esmaltes" />
       <Flash ok={sp.ok} />
       <Card className="space-y-4">
@@ -71,6 +71,6 @@ export default async function PolishPage({ params, searchParams }: PageProps<'/e
           <Card><PolishForm polish={p} photoUrl={photo} today={todayLocal()} /></Card>
         </>
       )}
-    </>
+    </div>
   )
 }

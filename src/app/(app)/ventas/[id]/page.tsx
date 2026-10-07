@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { CheckCircle2 } from 'lucide-react'
@@ -7,7 +7,7 @@ import { Card, SectionTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ButtonLink } from '@/components/ui/button'
 import { SaleAdminActions } from '@/components/ventas/sale-admin-actions'
-import { can, requireSession } from '@/lib/auth/session'
+import { can, canViewSales, requireSession } from '@/lib/auth/session'
 import { getSale } from '@/lib/data/sales'
 import { getPaymentMethods } from '@/lib/data/catalog'
 import { formatCOP } from '@/lib/domain/money'
@@ -17,6 +17,7 @@ export const metadata: Metadata = { title: 'Venta' }
 
 export default async function SalePage({ params, searchParams }: PageProps<'/ventas/[id]'>) {
   const [{ id }, sp, session] = await Promise.all([params, searchParams, requireSession()])
+  if (!canViewSales(session)) redirect('/inicio')
   const sale = await getSale(id)
   if (!sale) notFound()
   const isNew = sp.nueva === '1'
@@ -25,7 +26,7 @@ export default async function SalePage({ params, searchParams }: PageProps<'/ven
   const paymentMethods = canManage ? await getPaymentMethods(true) : []
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={isNew ? 'Venta registrada' : 'Venta'} subtitle={`${formatShortDate(toLocalDate(sale.sold_at))} · ${formatTime(sale.sold_at)}`} backHref={isNew ? '/inicio' : '/ventas'} />
 
       {isNew && (
@@ -79,6 +80,6 @@ export default async function SalePage({ params, searchParams }: PageProps<'/ven
           <Card><SaleAdminActions saleId={sale.id} paymentMethodId={sale.payment_method_id} paymentMethods={paymentMethods} /></Card>
         </>
       )}
-    </>
+    </div>
   )
 }

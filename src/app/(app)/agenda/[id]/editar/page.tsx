@@ -18,7 +18,7 @@ export default async function EditAppointmentPage({ params }: PageProps<'/agenda
   const [{ categories }, staff] = await Promise.all([getCatalog(), getStaff()])
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title="Editar cita" subtitle={a.customers?.full_name} backHref={`/agenda/${id}`} />
       <AppointmentForm
         mode="edit"
@@ -37,6 +37,6 @@ export default async function EditAppointmentPage({ params }: PageProps<'/agenda
           designNotes: a.design_notes,
         }}
       />
-    </>
+    </div>
   )
 }

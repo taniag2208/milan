@@ -110,6 +110,24 @@ supabase/
 | Inventario y esmaltes | Administración completa | Reporta salidas, pérdidas y daños, y cambios de estado de esmaltes |
 | Servicios, equipo, configuración, WhatsApp, auditoría | ✓ | — |
 
+**Equipo (compartido):** es un usuario único para las chicas que agendan y registran ventas en el spa.
+- Ve la agenda de todas.
+- Crea, mueve y cierra citas de cualquier profesional, eligiendo quién atendió.
+- Consulta las clientas, sin montos.
+- Reporta inventario y esmaltes.
+- **No** ve ventas, caja, comisiones ni el dashboard. Esto está bloqueado en la base de datos (RLS), no solo oculto en la pantalla.
+
+Para crearlo: **Más → Equipo y usuarios → + Agregar**, desmarca "Atiende clientas" y elige el rol **Equipo (compartido)**.
+
+### Celular y escritorio
+
+La app es **mobile-first** y se adapta al computador. En pantallas de 1024 px o más:
+- La barra inferior se reemplaza por un **menú lateral**.
+- El dashboard se reparte en columnas.
+- La agenda semanal se muestra como **calendario de 7 columnas**.
+- Clientes, ventas e inventario se muestran como **tablas**.
+- Los formularios quedan centrados.
+
 ### Comisiones
 
 Por defecto se calcula sobre el **valor del servicio cobrado, después del descuento** (el descuento se reparte en proporción entre los ítems). Se puede cambiar a “antes de descuento” en *Configuración*. Al cerrar la venta se elige **quién atendió**.

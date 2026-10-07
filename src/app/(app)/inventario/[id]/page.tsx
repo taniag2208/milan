@@ -26,7 +26,7 @@ export default async function ItemPage({ params, searchParams }: PageProps<'/inv
   const categories = manage ? [...new Set((await listInventory({})).map((i) => i.category))] : []
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={item.name} subtitle={item.category} backHref="/inventario" />
       <Flash ok={sp.ok} />
       <Card className="flex items-center justify-between">
@@ -77,6 +77,6 @@ export default async function ItemPage({ params, searchParams }: PageProps<'/inv
           <Card><ItemForm item={item} categories={categories} /></Card>
         </>
       )}
-    </>
+    </div>
   )
 }

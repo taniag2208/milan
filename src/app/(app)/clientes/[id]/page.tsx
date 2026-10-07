@@ -9,8 +9,9 @@ import { ButtonLink } from '@/components/ui/button'
 import { Flash } from '@/components/ui/flash'
 import { AppointmentCard } from '@/components/agenda/appointment-card'
 import { MiniStat } from '@/components/dashboard/bars'
-import { can, requireSession } from '@/lib/auth/session'
-import { getCustomerDetail } from '@/lib/data/customers'
+import { can, canViewMoney, requireSession } from '@/lib/auth/session'
+import { getCustomerDetail, getCustomerVisits } from '@/lib/data/customers'
+import { serviceNames } from '@/lib/data/appointments'
 import { CHANNELS, SEGMENTS } from '@/lib/domain/labels'
 import { formatCOP } from '@/lib/domain/money'
 import { formatPhone, whatsappLink } from '@/lib/domain/phone'
@@ -23,11 +24,15 @@ export default async function CustomerPage({ params, searchParams }: PageProps<'
   const detail = await getCustomerDetail(id, new Date().toISOString())
   if (!detail) notFound()
   const { customer: c, stats, segments, upcoming, history } = detail
-  const seeFinancials = can(session, 'customers.read_all')
+  const seeFinancials = canViewMoney(session)
+  // Sin acceso a montos: el historial se arma con las citas finalizadas.
+  const visits = seeFinancials ? [] : await getCustomerVisits(c.id)
+  const visitCount = seeFinancials ? stats?.visits ?? 0 : visits.length
+  const lastVisit = seeFinancials ? stats?.last_visit_at : visits[0]?.finished_at ?? visits[0]?.starts_at
   const canSchedule = can(session, 'appointments.manage_all') || can(session, 'appointments.create')
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-3xl">
       <PageHeader
         title={c.full_name}
         subtitle={formatPhone(c.phone_e164)}
@@ -47,8 +52,8 @@ export default async function CustomerPage({ params, searchParams }: PageProps<'
       )}
 
       <div className="grid grid-cols-3 gap-2">
-        <MiniStat label="Visitas" value={stats?.visits ?? 0} />
-        <MiniStat label="Última" value={stats?.last_visit_at ? formatShortDate(toLocalDate(stats.last_visit_at), false) : '—'} />
+        <MiniStat label="Visitas" value={visitCount} />
+        <MiniStat label="Última" value={lastVisit ? formatShortDate(toLocalDate(lastVisit), false) : '—'} />
         {seeFinancials ? <MiniStat label="Gastado" value={formatCOP(stats?.total_spent ?? 0)} /> : <MiniStat label="Origen" value={CHANNELS[c.source]} />}
       </div>
 
@@ -89,7 +94,26 @@ export default async function CustomerPage({ params, searchParams }: PageProps<'
       )}
 
       <SectionTitle>Historial</SectionTitle>
-      {history.length === 0 ? (
+      {!seeFinancials ? (
+        visits.length === 0 ? (
+          <Card className="text-sm text-ink-muted">Aún no hay servicios registrados.</Card>
+        ) : (
+          <ol className="space-y-2">
+            {visits.map((v) => (
+              <li key={v.id}>
+                <Card>
+                  <p className="text-sm text-ink-muted">{formatShortDate(toLocalDate(v.starts_at))}</p>
+                  <p className="mt-1">{serviceNames(v)}</p>
+                  <p className="mt-1 text-xs text-ink-muted">{v.staff?.display_name}</p>
+                  {(v.design_notes || v.notes) && (
+                    <p className="mt-2 rounded-xl bg-cream/60 px-3 py-2 text-sm text-ink-soft">{v.design_notes ?? v.notes}</p>
+                  )}
+                </Card>
+              </li>
+            ))}
+          </ol>
+        )
+      ) : history.length === 0 ? (
         <Card className="text-sm text-ink-muted">Aún no hay servicios registrados.</Card>
       ) : (
         <ol className="space-y-2">
@@ -115,7 +139,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<'
           ))}
         </ol>
       )}
-    </>
+    </div>
   )
 }
 

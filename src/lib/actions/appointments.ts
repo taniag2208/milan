@@ -9,6 +9,7 @@ import { normalizePhone } from '@/lib/domain/phone'
 import { uploadImage } from '@/lib/storage'
 import type { CompleteAppointmentResult } from '@/lib/types/db'
 import { CHANNELS } from '@/lib/domain/labels'
+import { can, getSession } from '@/lib/auth/session'
 
 const channelEnum = z.enum(Object.keys(CHANNELS) as [keyof typeof CHANNELS, ...(keyof typeof CHANNELS)[]])
 
@@ -186,5 +187,11 @@ export async function completeAppointment(payload: CompletePayload): Promise<{ e
   revalidatePath('/agenda')
   revalidatePath('/inicio')
   revalidatePath('/ventas')
-  redirect(`/ventas/${result.sale_id}?nueva=1`)
+  // Quien no puede leer esa venta (p. ej. usuario compartido) ve una confirmación sin acceso a Ventas.
+  const session = await getSession()
+  if (session && (can(session, 'sales.read_all') || session.staffId === v.staffId)) {
+    redirect(`/ventas/${result.sale_id}?nueva=1`)
+  }
+  const qs = new URLSearchParams({ total: String(result.total), pago: result.payment_method })
+  redirect(`/agenda/${v.appointmentId}/listo?${qs}`)
 }

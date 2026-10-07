@@ -41,7 +41,7 @@ export function BottomNav({ fab }: { fab: FabTargets }) {
   return (
     <nav
       aria-label="Navegación principal"
-      className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/95 backdrop-blur-md"
+      className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/95 backdrop-blur-md lg:hidden"
     >
       <div className="mx-auto grid h-16 max-w-xl grid-cols-5 items-center">
         {ITEMS.map((item) => {

@@ -33,10 +33,9 @@ echo "→ re-aplicando migraciones (idempotencia)"
 for f in "$ROOT"/supabase/migrations/*.sql; do
   PGOPTIONS="-c client_min_messages=warning" psql_db milan_test -f "$f" >/dev/null
 done
-for f in "$ROOT"/supabase/tests/[1-9]*.sql; do
-  echo "→ test $(basename "$f")"
-  PGOPTIONS="-c client_min_messages=notice" psql_db milan_test -f "$f" 2>&1 >/dev/null | sed -E 's/^psql:[^ ]+ NOTICE:  /  /'
-done
+# Todos los archivos de prueba corren en una misma sesión (comparten helpers pg_temp).
+echo "→ tests: $(cd "$ROOT/supabase/tests" && ls [1-9]*.sql | tr '\n' ' ')"
+cat "$ROOT"/supabase/tests/[1-9]*.sql | PGOPTIONS="-c client_min_messages=notice" psql_db milan_test -f - 2>&1 >/dev/null | sed -E 's/^psql:[^ ]+ NOTICE:  /  /'
 
 echo "→ seed.sql (base aparte)"
 setup_db milan_seed

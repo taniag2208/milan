@@ -33,7 +33,7 @@ export default async function AppointmentPage({ params, searchParams }: PageProp
   const phone = a.customers?.phone_e164
 
   return (
-    <>
+    <div className="lg:mx-auto lg:max-w-2xl">
       <PageHeader title={a.customers?.full_name ?? 'Cita'} subtitle={formatLongDate(toLocalDate(a.starts_at))} backHref="/agenda" />
       <Flash ok={sp.ok} />
 
@@ -81,6 +81,8 @@ export default async function AppointmentPage({ params, searchParams }: PageProp
               <ButtonLink href={`/ventas/${sale.id}`} variant="soft" block>
                 <Receipt className="size-4" /> Venta registrada · {formatCOP(sale.total)}
               </ButtonLink>
+            ) : a.status === 'finalizada' ? (
+              <p className="rounded-2xl bg-success-soft px-4 py-3 text-center text-sm text-success">Servicio finalizado y venta registrada</p>
             ) : (
               <PrimaryAction id={a.id} status={a.status} />
             )}
@@ -151,6 +153,6 @@ export default async function AppointmentPage({ params, searchParams }: PageProp
           <Pencil className="size-4" /> Editar o reprogramar
         </ButtonLink>
       )}
-    </>
+    </div>
   )
 }

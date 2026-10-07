@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { RangePicker, parseRangeKey } from '@/components/ui/range-picker'
 import { MarkPaidButton } from '@/components/ventas/mark-paid-button'
-import { can, requireSession } from '@/lib/auth/session'
+import { redirect } from 'next/navigation'
+import { can, canViewCommissions, requireSession } from '@/lib/auth/session'
 import { getCommissionSummary } from '@/lib/data/commissions'
 import { type RangeKey, resolveRange, todayLocal } from '@/lib/domain/dates'
 import { formatCOP } from '@/lib/domain/money'
@@ -14,18 +15,19 @@ const RANGES: RangeKey[] = ['hoy', 'semana', 'quincena', 'mes', 'personalizado']
 
 export default async function CommissionsPage({ searchParams }: PageProps<'/comisiones'>) {
   const [session, sp] = await Promise.all([requireSession(), searchParams])
+  if (!canViewCommissions(session)) redirect('/inicio')
   const rangeKey = parseRangeKey(sp.rango ?? 'quincena', RANGES)
   const { from, to } = resolveRange(rangeKey, todayLocal(), { from: sp.desde as string, to: sp.hasta as string })
   const canSeeAll = can(session, 'commissions.read_all')
-  const rows = canSeeAll || session.staffId ? await getCommissionSummary(from, to) : []
+  const rows = await getCommissionSummary(from, to)
   const canPay = can(session, 'commissions.manage')
 
   return (
     <>
       <PageHeader title="Comisiones" subtitle={canSeeAll ? 'Por profesional' : 'Tus comisiones'} backHref="/mas" />
-      <RangePicker basePath="/comisiones" active={rangeKey} keys={RANGES} from={from} to={to} />
-      <div className="mt-4 space-y-3">
-        {rows.length === 0 && <EmptyState title="Sin comisiones" description="No hay profesionales con ventas en este periodo." />}
+      <div className="lg:max-w-xl"><RangePicker basePath="/comisiones" active={rangeKey} keys={RANGES} from={from} to={to} /></div>
+      <div className="mt-4 space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0 xl:grid-cols-3">
+        {rows.length === 0 && <div className="lg:col-span-full"><EmptyState title="Sin comisiones" description="No hay profesionales con ventas en este periodo." /></div>}
         {rows.map((r) => (
           <Card key={r.staff_id} className="space-y-3">
             <div className="flex items-baseline justify-between">

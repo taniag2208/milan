@@ -39,7 +39,7 @@ export default async function PolishesPage({ searchParams }: PageProps<'/esmalte
   return (
     <>
       <PageHeader title="Esmaltes" subtitle={`${polishes.length} en la lista`} backHref="/mas" />
-      <form method="get" className="relative">
+      <form method="get" className="relative lg:max-w-md">
         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-muted" />
         <input type="search" name="q" defaultValue={q} placeholder="Marca, color, referencia o código" className="h-12 w-full rounded-full border border-line bg-card pl-10 pr-4 focus:border-almond focus:outline-none" />
         {estado && <input type="hidden" name="estado" value={estado} />}
@@ -61,7 +61,7 @@ export default async function PolishesPage({ searchParams }: PageProps<'/esmalte
             action={can(session, 'polishes.manage') ? <ButtonLink href="/esmaltes/nuevo">+ Nuevo esmalte</ButtonLink> : undefined}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {polishes.map((p) => {
               const photo = polishPhotoUrl(p.photo_path)
               return (
