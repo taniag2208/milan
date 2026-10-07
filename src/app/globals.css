@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+/* Paleta MILAN · Earthy neutral */
+@theme {
+  --color-page: #fbf8f1;
+  --color-card: #ffffff;
+  --color-cream: #f5f0e0;
+  --color-beige: #e7dfcb;
+  --color-sandstone: #d2c5ab;
+  --color-taupe: #bcaa8e;
+  --color-almond: #a8957b;
+  --color-almond-deep: #7d6b55;
+  --color-ink: #1f1b16;
+  --color-ink-soft: #5f564b;
+  --color-ink-muted: #8a8073;
+  --color-line: #ebe4d4;
+  --color-success: #4f6b4a;
+  --color-success-soft: #e6ece1;
+  --color-warning: #94691f;
+  --color-warning-soft: #f6ecd6;
+  --color-danger: #9a4237;
+  --color-danger-soft: #f5e3df;
+
+  --font-display: var(--font-bodoni), 'Didot', Georgia, serif;
+  --font-sans: var(--font-jost), system-ui, -apple-system, sans-serif;
+
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 2px rgb(31 27 22 / 0.04), 0 4px 16px rgb(31 27 22 / 0.04);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+  /* Inputs a 16px para que iOS no haga zoom. */
+  input, select, textarea, button {
+    font: inherit;
+  }
+  ::selection {
+    background: var(--color-beige);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-almond);
+    outline-offset: 2px;
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
