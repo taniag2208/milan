@@ -1,0 +1,17 @@
+{
+  "store": "technofood-9wna2s1h.myshopify.com",
+  "captured": "2026-10-19",
+  "collections": {
+    "linea-panaderia": {"id": "gid://shopify/Collection/657902567787", "title": "Línea Panadería", "published_online_store": true, "sortOrder": "BEST_SELLING",
+      "ruleSet": {"appliedDisjunctively": false, "rules": [{"column": "TAG", "relation": "EQUALS", "condition": "linea:linea-panaderia"}]}},
+    "linea-carnica": {"id": "gid://shopify/Collection/657899028843", "title": "Línea Cárnica", "published_online_store": true, "sortOrder": "BEST_SELLING",
+      "ruleSet": {"appliedDisjunctively": false, "rules": [{"column": "TAG", "relation": "EQUALS", "condition": "linea:linea-carnica"}]}},
+    "panaderia": {"id": "gid://shopify/Collection/657898930539", "title": "Panadería", "published_online_store": true, "sortOrder": "BEST_SELLING",
+      "ruleSet": {"appliedDisjunctively": false, "rules": [{"column": "TAG", "relation": "EQUALS", "condition": "panaderia"}]}}
+  },
+  "url_redirects_collections": [],
+  "menus_linking_/collections/panaderia": [
+    {"menu": "catalogo-categorias", "item": "Línea Panadería", "url": "/collections/panaderia"},
+    {"menu": "catalogo-marcas", "item": "Línea Panadería", "url": "/collections/panaderia"}
+  ]
+}
